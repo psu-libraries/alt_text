@@ -19,7 +19,7 @@ options = {
 
 # ---------- CLI Parsing ----------
 OptionParser.new do |opts|
-  opts.banner = "Usage: ruby script.rb [options]"
+  opts.banner = "Usage: ruby alt_text.rb [options]"
 
   opts.on('-s FILE', '--save FILE', 'Save output file path') { |v| options[:save_file] = v }
   opts.on('-llm MODEL', 'Model name (default, sonnet3.51, sonnet3.52, sonnet3.571, novapro)') { |v| options[:model] = v }
@@ -121,10 +121,10 @@ files.each_with_index do |filepath, index|
     begin
       output_file.puts("#{filepath}: \t#{output_text}")
     rescue => e
-      output_file.puts("#{filepath}: \terror thrown by amazon api")
+      output_file.puts("#{filepath}: \terror thrown by amazon api: #{e.message}")
     end
   rescue => e
-    output_file.puts("#{filepath}: \terror returned via the ai -- skipping")
+    output_file.puts("#{filepath}: \terror returned via the ai -- skipping: #{e.message}")
   end
 end
 
