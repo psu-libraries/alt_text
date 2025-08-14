@@ -1,0 +1,6 @@
+.env
+output/*
+images/*
+*.tmp
+.DS_Store
+
