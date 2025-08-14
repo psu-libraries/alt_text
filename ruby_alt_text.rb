@@ -117,17 +117,14 @@ files.each_with_index do |filepath, index|
 
     output_json = JSON.parse(response.body.read)
     output_text = output_json['content'][0]['text']
-      .gsub('```json', '')
-      .gsub('```', '')
 
     begin
-      alt_text = JSON.parse(output_text)
-      output_file.puts("#{filepath}\t#{alt_text['image']['alt']}\t#{alt_text['image']['desc']}\t#{alt_text['image']['subjects']}")
-    rescue
-      output_file.puts("#{filepath}\terror thrown by amazon api")
+      output_file.puts("#{filepath}: \t#{output_text}")
+    rescue => e
+      output_file.puts("#{filepath}: \terror thrown by amazon api")
     end
-  rescue
-    output_file.puts("#{filepath}\terror returned via the ai -- skipping")
+  rescue => e
+    output_file.puts("#{filepath}: \terror returned via the ai -- skipping")
   end
 end
 
