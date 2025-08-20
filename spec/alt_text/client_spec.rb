@@ -79,7 +79,7 @@ RSpec.describe AltText::Client do
         tempfile = client.send(:resize_if_needed, image_path)
         tempfile_path = tempfile.path
         expect(tempfile).to be_a(Tempfile)
-        expect(tempfile_path).to match(/_tmp\.png.*/)
+        expect(tempfile_path).to match(/_tmp\.jpg.*/)
         tempfile.close!
         expect(File).not_to exist(tempfile_path)
       end

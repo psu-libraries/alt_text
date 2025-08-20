@@ -8,6 +8,6 @@ gem 'dotenv'
 gem 'mini_magick'
 
 group :development, :test do
-  gem 'rspec'
   gem 'niftany'
+  gem 'rspec'
 end
