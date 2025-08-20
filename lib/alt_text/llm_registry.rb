@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AltText
   class LLMRegistry
     LLM_MAP = {

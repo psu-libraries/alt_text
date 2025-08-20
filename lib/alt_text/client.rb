@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'aws-sdk-bedrockruntime'
 require 'mini_magick'
 require 'base64'
@@ -21,28 +23,25 @@ module AltText
 
       payload = {
         messages: [
-          { role: "user", 
+          { role: 'user',
             content: [
-              { type: "image", 
-                source: 
-                  { type: "base64", 
-                    media_type: "image/jpeg", 
-                    data: encoded_image 
-                    }
-                   },
-              { type: "text", 
+              { type: 'image',
+                source:
+                  { type: 'base64',
+                    media_type: 'image/jpeg',
+                    data: encoded_image } },
+              { type: 'text',
                 text: prompt }
-            ]
-          }
+            ] }
         ],
         max_tokens: 10_000,
-        anthropic_version: "bedrock-2023-05-31"
+        anthropic_version: 'bedrock-2023-05-31'
       }
 
-      response = @client.invoke_model(model_id: model_id, 
-                                      content_type: "application/json", 
+      response = @client.invoke_model(model_id: model_id,
+                                      content_type: 'application/json',
                                       body: payload.to_json)
-      JSON.parse(response.body.read)["content"][0]["text"]
+      JSON.parse(response.body.read)['content'][0]['text']
     end
 
     private
@@ -53,10 +52,10 @@ module AltText
         else
           tmp_image_path = "#{filepath}_tmp_#{SecureRandom.hex}.png"
           image = MiniMagick::Image.open(file)
-          image.resize "800x"
+          image.resize '800x'
           image.write tmp_image_path
           tmp_image_path
         end
-    end
+      end
   end
 end
