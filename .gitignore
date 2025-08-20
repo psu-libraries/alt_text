@@ -3,4 +3,4 @@ output/*
 images/*
 *.tmp
 .DS_Store
-
+spec/fixtures/*_tmp_*.png

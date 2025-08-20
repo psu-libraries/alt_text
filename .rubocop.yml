@@ -1,2 +1,5 @@
 inherit_gem:
   niftany: niftany_rubocop.yml
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false

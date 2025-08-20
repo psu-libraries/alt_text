@@ -4,6 +4,12 @@ This uses Ruby's AWS SDK to send images and a prompt to an LLM in Amazon's Bedro
 
 ### Ruby Client Usage
 
+Add the gem to your project:
+
+```
+gem install alt_text
+```
+
 Instantiate the client with injected AWS credentials:
 
 ```

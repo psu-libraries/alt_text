@@ -50,7 +50,7 @@ module AltText
         if File.size(file) < 4_000_000
           file
         else
-          tmp_image_path = "#{filepath}_tmp_#{SecureRandom.hex}.png"
+          tmp_image_path = "#{file}_tmp_#{SecureRandom.hex}.png"
           image = MiniMagick::Image.open(file)
           image.resize '800x'
           image.write tmp_image_path

@@ -6,4 +6,8 @@ source 'https://rubygems.org'
 gem 'aws-sdk-bedrockruntime'
 gem 'dotenv'
 gem 'mini_magick'
-gem 'niftany'
+
+group :development, :test do
+  gem 'niftany'
+  gem 'rspec'
+end
