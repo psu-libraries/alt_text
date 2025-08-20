@@ -4,7 +4,33 @@ This uses Ruby's AWS SDK to send images and a prompt to an LLM in Amazon's Bedro
 
 ### Ruby Client Usage
 
-Add the gem to your project:
+This gem uses imagemagick to resize large images, so you will need to install imagemagick:
+
+Mac:
+
+```
+brew install imagemagick
+```
+
+Ubuntu:
+
+```
+apt-get update
+apt-get install imagemagick
+```
+
+Then, add the gem to your project:
+
+In the Gemfile:
+```
+# Gemfile
+gem 'alt_text'
+```
+```
+bundle install
+```
+
+Or, via `gem install`:
 
 ```
 gem install alt_text
