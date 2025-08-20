@@ -75,10 +75,13 @@ RSpec.describe AltText::Client do
         allow(File).to receive(:size).with(image_path).and_return(5_000_000)
       end
 
-      it 'returns a new file path' do
-        new_path = client.send(:resize_if_needed, image_path)
-        expect(new_path).to match(/_tmp_.*\.png/)
-        FileUtils.rm_f(new_path) # Clean up temp file
+      it 'returns a tempfile' do
+        tempfile = client.send(:resize_if_needed, image_path)
+        tempfile_path = tempfile.path
+        expect(tempfile).to be_a(Tempfile)
+        expect(tempfile_path).to match(/_tmp\.png.*/)
+        tempfile.close!
+        expect(File).not_to exist(tempfile_path)
       end
     end
   end

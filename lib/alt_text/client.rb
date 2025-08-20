@@ -19,7 +19,7 @@ module AltText
       tmp_image = resize_if_needed(image_path)
 
       encoded_image = Base64.strict_encode64(File.binread(tmp_image))
-      File.delete(tmp_image) if tmp_image != image_path
+      tmp_image.close! if tmp_image.is_a?(Tempfile)
 
       payload = {
         messages: [
@@ -50,11 +50,11 @@ module AltText
         if File.size(file) < 4_000_000
           file
         else
-          tmp_image_path = "#{file}_tmp_#{SecureRandom.hex}.png"
+          tmp = Tempfile.new("#{file}_tmp.png")
           image = MiniMagick::Image.open(file)
           image.resize '800x'
-          image.write tmp_image_path
-          tmp_image_path
+          image.write tmp.path
+          tmp
         end
       end
   end
