@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+require_relative "../lib/alt_text"
+require "dotenv/load"
+require "optparse"
+
+# ---------- Defaults ----------
+options = {
+  save_file: 'output/output.txt',
+  model: 'default',
+  prompt_file: 'prompt.txt',
+  folder: 'images/'
+}
+
+# ---------- CLI Parsing ----------
+OptionParser.new do |opts|
+  opts.banner = "Usage: bundle exec bin/alt_text.rb [options]"
+
+  opts.on('-s FILE', '--save FILE', 'Save output file path') { |v| options[:save_file] = v }
+  opts.on('-l MODEL', '--llm MODEL', "Model name (#{AltText::LLMRegistry.available.join(', ')})") { |v| options[:model] = v }
+  opts.on('-d FOLDER', '--dir FOLDER', 'Folder to process') { |v| options[:folder] = v }
+  opts.on('-p FILE', '--prompt FILE', 'Prompt file path') { |v| options[:prompt_file] = v }
+end.parse!
+
+# ---------- Helpers ----------
+def list_files_scandir(path='.', str_exclude='pdf')
+  Dir.glob(File.join(path, '**', '*'))
+    .select { |f| File.file?(f) && !f.downcase.end_with?(str_exclude) }
+end
+
+# ---------- Setup ----------
+File.delete(options[:save_file]) if File.exist?(options[:save_file])
+output_file = File.open(options[:save_file], 'w')
+model_id = options[:model]
+prompt_string = File.read(options[:prompt_file])
+files = list_files_scandir(options[:folder])
+
+Dotenv.load('.env')
+
+client = AltText::Client.new(
+  access_key: ENV['AWS_ACCESS_KEY_ID'],
+  secret_key: ENV['AWS_SECRET_ACCESS_KEY'],
+  region: ENV['AWS_REGION']
+)
+
+# ---------- Process Images ----------
+files.each_with_index do |file, index|
+  puts "Processing image #{index + 1} of #{files.size}: #{file}"
+  begin
+    output = client.process_image(file, prompt: prompt_string, model_id: model_id)
+  rescue StandardError => e
+    output = "Processing error: #{e.message}"
+  ensure
+    output_file.puts("#{file}: \t#{output}")
+  end
+end

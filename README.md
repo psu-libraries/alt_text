@@ -2,7 +2,59 @@
 
 This uses Ruby's AWS SDK to send images and a prompt to an LLM in Amazon's Bedrock to generate Alt Text for the images.
 
-### Usage
+### Ruby Client Usage
+
+This gem uses imagemagick to resize large images, so you will need to install imagemagick:
+
+Mac:
+
+```
+brew install imagemagick
+```
+
+Ubuntu:
+
+```
+apt-get update
+apt-get install imagemagick
+```
+
+Then, add the gem to your project:
+
+In the Gemfile:
+```
+# Gemfile
+gem 'alt_text'
+```
+```
+bundle install
+```
+
+Or, via `gem install`:
+
+```
+gem install alt_text
+```
+
+Instantiate the client with injected AWS credentials:
+
+```
+client = AltText::Client.new {
+  access_key_id: ENV['YOUR_ACCESS_KEY_ID'],
+  secret_access_key: ENV['YOUR_SECRET_ACCESS_KEY'],
+  region: 'us-east-1'
+}
+```
+
+Call the `#process_image` method with the image path, prompt, and LLM ID as arguments:
+
+```
+client.process_image('folder/image.png', 'Please generate alt text', 'sonnet3.51`)
+```
+
+*Note: A sample prompt can be found in `prompt.txt`.*
+
+### CLI Usage
 
 Copy the `.env.sample` file to `.env` and add your AWS credentials.
 
@@ -13,9 +65,9 @@ cp .env.sample .env
 General CLI command to generate Alt Text for images in the `images/` directory:
 
 ```
-bundle exec ruby alt_text.rb \
+bundle exec bin/alt_text \
   -s output/output.txt \
-  -llm default \
+  -l default \
   -d images \
   -p prompt.txt
 ```
@@ -23,5 +75,5 @@ bundle exec ruby alt_text.rb \
 Run this for help:
 
 ```
-bundle exec ruby alt_text.rb -h
+bundle exec bin/alt_text -h
 ```
