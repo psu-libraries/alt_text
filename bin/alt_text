@@ -42,8 +42,14 @@ client = AltText::Client.new(
   region: ENV['AWS_REGION']
 )
 
+# ---------- Process Images ----------
 files.each_with_index do |file, index|
   puts "Processing image #{index + 1} of #{files.size}: #{file}"
-  output = client.process_image(file, prompt: prompt_string, model_id: model_id)
-  output_file.puts("#{file}: \t#{output}")
+  begin
+    output = client.process_image(file, prompt: prompt_string, model_id: model_id)
+  rescue StandardError => e
+    output = "Processing error: #{e.message}"
+  ensure
+    output_file.puts("#{file}: \t#{output}")
+  end
 end
