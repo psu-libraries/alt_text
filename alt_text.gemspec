@@ -12,7 +12,9 @@ Gem::Specification.new do |spec|
   spec.files = Dir["lib/**/*", "bin/*", "README.md", "LICENSE.txt", "prompt.txt"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "aws-sdk-bedrockruntime"
-  spec.add_dependency "dotenv"
-  spec.add_dependency "mini_magick"
+  spec.required_ruby_version = '>= 3.4'
+
+  spec.add_dependency "aws-sdk-bedrockruntime", '~> 1.55.0'
+  spec.add_dependency "dotenv", '~> 3.1.8'
+  spec.add_dependency "mini_magick", '~> 5.3.0'
 end
