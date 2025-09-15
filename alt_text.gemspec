@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'alt_text'
-  spec.version       = '0.1.0'
+  spec.version       = AltText::VERSION
   spec.authors       = ['Alex Kiessling']
   spec.email         = ['ajk5603@psu.edu']
 

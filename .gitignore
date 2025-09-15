@@ -2,5 +2,6 @@
 output/*
 images/*
 *.tmp
+*.gem
 .DS_Store
 spec/fixtures/*_tmp_*.png
