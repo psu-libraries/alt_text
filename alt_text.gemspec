@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/psu-libraries/alt_text"
   spec.license       = "MIT"
 
-  spec.files         = Dir["lib/**/*", "README.md", "LICENSE.txt"]
+  spec.files = Dir["lib/**/*", "bin/*", "README.md", "LICENSE.txt", "prompt.txt"]
   spec.require_paths = ["lib"]
 
   spec.add_dependency "aws-sdk-bedrockruntime"
