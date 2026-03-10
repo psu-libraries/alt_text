@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 module AltText
+  # Notice: Bedrock models are updated frequently.
+  # This registry will likely change in the near future.
+  # The ruby AWS Bedrock SDK's converse method supports these models.
   class LLMRegistry
     LLM_MAP = {
-      'default' => 'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'sonnet3.51' => 'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'sonnet3.52' => 'anthropic.claude-3-5-sonnet-20241022-v2:0',
-      'sonnet3.571' => 'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
+      'default' => 'us.amazon.nova-pro-v1:0',
+      'novalite' => 'amazon.nova-lite-v1:0',
+      'sonnet4.5' => 'anthropic.claude-sonnet-4-5',
       'novapro' => 'us.amazon.nova-pro-v1:0'
     }.freeze
 

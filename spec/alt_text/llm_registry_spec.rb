@@ -6,10 +6,9 @@ require 'alt_text/llm_registry'
 RSpec.describe AltText::LLMRegistry do
   describe '.resolve' do
     it 'returns the correct model id for a valid key' do
-      expect(described_class.resolve('default')).to eq('anthropic.claude-3-5-sonnet-20240620-v1:0')
-      expect(described_class.resolve('sonnet3.51')).to eq('anthropic.claude-3-5-sonnet-20240620-v1:0')
-      expect(described_class.resolve('sonnet3.52')).to eq('anthropic.claude-3-5-sonnet-20241022-v2:0')
-      expect(described_class.resolve('sonnet3.571')).to eq('us.anthropic.claude-3-7-sonnet-20250219-v1:0')
+      expect(described_class.resolve('default')).to eq('us.amazon.nova-pro-v1:0')
+      expect(described_class.resolve('sonnet4.5')).to eq('anthropic.claude-sonnet-4-5')
+      expect(described_class.resolve('novalite')).to eq('amazon.nova-lite-v1:0')
       expect(described_class.resolve('novapro')).to eq('us.amazon.nova-pro-v1:0')
     end
 
@@ -20,8 +19,7 @@ RSpec.describe AltText::LLMRegistry do
 
   describe '.available' do
     it 'returns all available keys' do
-      expect(described_class.available).to contain_exactly('default', 'sonnet3.51', 'sonnet3.52', 'sonnet3.571',
-                                                           'novapro')
+      expect(described_class.available).to contain_exactly('default', 'sonnet4.5', 'novalite', 'novapro')
     end
   end
 end

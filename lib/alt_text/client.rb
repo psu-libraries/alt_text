@@ -18,30 +18,42 @@ module AltText
       model_id = AltText::LLMRegistry.resolve(model_id)
       tmp_image = resize_if_needed(image_path)
 
-      encoded_image = Base64.strict_encode64(File.binread(tmp_image))
+      image_bytes = File.binread(tmp_image)
       tmp_image.close! if tmp_image.is_a?(Tempfile)
 
-      payload = {
-        messages: [
-          { role: 'user',
-            content: [
-              { type: 'image',
-                source:
-                  { type: 'base64',
-                    media_type: 'image/jpeg',
-                    data: encoded_image } },
-              { type: 'text',
-                text: prompt }
-            ] }
-        ],
-        max_tokens: 10_000,
-        anthropic_version: 'bedrock-2023-05-31'
-      }
+      messages = [
+        {
+          role: 'user',
+          content: [
+            {
+              image: {
+                format: 'jpeg',
+                source: {
+                  bytes: image_bytes
+                }
+              }
+            },
+            {
+              text: prompt
+            }
+          ]
+        }
+      ]
 
-      response = @client.invoke_model(model_id: model_id,
-                                      content_type: 'application/json',
-                                      body: payload.to_json)
-      JSON.parse(response.body.read)['content'][0]['text']
+      # The `converse` method of the Bedrock Ruby SDK is used to interact with
+      # LLM models in a standardized way, using a "messages" schema that supports
+      # text, images, and tool calls. Unlike `invoke_model`, which requires
+      # model-specific payloads, `converse` abstracts the input format so the
+      # same structure can be used across multiple models.
+      #
+      # Examples of supported models:
+      #   - Amazon Nova Pro (supports text and images)
+      #   - Amazon Nova Lite (supports text and images)
+      #   - Anthropic Claude / Opus (supports text and images)
+      response = @client.converse(model_id: model_id,
+                                  messages: messages)
+
+      response.output.message.content.first.text
     end
 
     private
