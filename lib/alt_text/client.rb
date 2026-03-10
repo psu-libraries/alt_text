@@ -43,8 +43,8 @@ module AltText
       # The `converse` method of the Bedrock Ruby SDK is used to interact with
       # LLM models in a standardized way, using a "messages" schema that supports
       # text, images, and tool calls. Unlike `invoke_model`, which requires
-      # model-specific payloads, `converse` abstracts the input format so the
-      # same structure can be used across multiple models.
+      # model-specific payloads.  Note that this prevents fine-grained control
+      # of image processing parameters that some models may support.
       #
       # Examples of supported models:
       #   - Amazon Nova Pro (supports text and images)
