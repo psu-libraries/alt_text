@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    alt_text (0.1.1)
+    alt_text (0.2.0)
       aws-sdk-bedrockruntime (~> 1.55.0)
       dotenv (~> 3.1.8)
       marcel (~> 1.1)
