@@ -2,6 +2,8 @@
 
 This uses Ruby's AWS SDK to send images and a prompt to an LLM in Amazon's Bedrock to generate Alt Text for the images.
 
+The client uses Bedrock's `converse` API and currently supports JPEG and PNG inputs.
+
 ### Ruby Client Usage
 
 This gem uses imagemagick to resize large images, so you will need to install imagemagick:
@@ -39,18 +41,28 @@ gem install alt_text
 Instantiate the client with injected AWS credentials:
 
 ```
-client = AltText::Client.new {
-  access_key_id: ENV['YOUR_ACCESS_KEY_ID'],
-  secret_access_key: ENV['YOUR_SECRET_ACCESS_KEY'],
+client = AltText::Client.new(
+  access_key: ENV['AWS_ACCESS_KEY_ID'],
+  secret_key: ENV['AWS_SECRET_ACCESS_KEY'],
   region: 'us-east-1'
-}
+)
 ```
 
 Call the `#process_image` method with the image path, prompt, and LLM ID as arguments:
 
 ```
-client.process_image('folder/image.png', 'Please generate alt text', 'sonnet3.51`)
+client.process_image(
+  'folder/image.png',
+  prompt: 'Please generate alt text',
+  model_id: 'default'
+)
 ```
+
+Supported image types:
+
+- `.jpg`
+- `.jpeg`
+- `.png`
 
 *Note: A sample prompt can be found in `prompt.txt`.*
 
