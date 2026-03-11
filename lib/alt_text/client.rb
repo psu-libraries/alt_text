@@ -2,7 +2,7 @@
 
 require 'aws-sdk-bedrockruntime'
 require 'mini_magick'
-require 'base64'
+require 'marcel'
 
 module AltText
   class Client
@@ -16,6 +16,7 @@ module AltText
 
     def process_image(image_path, prompt:, model_id:)
       model_id = AltText::LLMRegistry.resolve(model_id)
+      image_format = image_format_for(image_path)
       tmp_image = resize_if_needed(image_path)
 
       image_bytes = File.binread(tmp_image)
@@ -27,7 +28,7 @@ module AltText
           content: [
             {
               image: {
-                format: 'jpeg',
+                format: image_format,
                 source: {
                   bytes: image_bytes
                 }
@@ -57,6 +58,16 @@ module AltText
     end
 
     private
+
+      def image_format_for(path)
+        content_type = Marcel::MimeType.for(Pathname.new(path))
+        case content_type
+        when 'image/jpeg' then 'jpeg'
+        when 'image/png'  then 'png'
+        else
+          raise ArgumentError, "Unsupported image type: #{content_type || 'unknown'}"
+        end
+      end
 
       def resize_if_needed(file)
         if File.size(file) < 4_000_000

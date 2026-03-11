@@ -3,7 +3,7 @@
 module AltText
   # Notice: Bedrock models are updated frequently.
   # This registry will likely change in the near future.
-  # The ruby AWS Bedrock SDK's converse method supports these models.
+  # The Bedrock Ruby SDK's converse method supports these models.
   class LLMRegistry
     LLM_MAP = {
       'default' => 'us.amazon.nova-pro-v1:0',
