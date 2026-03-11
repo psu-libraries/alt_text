@@ -2,7 +2,7 @@
 
 require 'aws-sdk-bedrockruntime'
 require 'mini_magick'
-require 'base64'
+require 'marcel'
 
 module AltText
   class Client
@@ -16,35 +16,58 @@ module AltText
 
     def process_image(image_path, prompt:, model_id:)
       model_id = AltText::LLMRegistry.resolve(model_id)
+      image_format = image_format_for(image_path)
       tmp_image = resize_if_needed(image_path)
 
-      encoded_image = Base64.strict_encode64(File.binread(tmp_image))
+      image_bytes = File.binread(tmp_image)
       tmp_image.close! if tmp_image.is_a?(Tempfile)
 
-      payload = {
-        messages: [
-          { role: 'user',
-            content: [
-              { type: 'image',
-                source:
-                  { type: 'base64',
-                    media_type: 'image/jpeg',
-                    data: encoded_image } },
-              { type: 'text',
-                text: prompt }
-            ] }
-        ],
-        max_tokens: 10_000,
-        anthropic_version: 'bedrock-2023-05-31'
-      }
+      messages = [
+        {
+          role: 'user',
+          content: [
+            {
+              image: {
+                format: image_format,
+                source: {
+                  bytes: image_bytes
+                }
+              }
+            },
+            {
+              text: prompt
+            }
+          ]
+        }
+      ]
 
-      response = @client.invoke_model(model_id: model_id,
-                                      content_type: 'application/json',
-                                      body: payload.to_json)
-      JSON.parse(response.body.read)['content'][0]['text']
+      # The `converse` method of the Bedrock Ruby SDK is used to interact with
+      # LLM models in a standardized way, using a "messages" schema that supports
+      # text, images, and tool calls. Unlike `invoke_model`, which requires
+      # model-specific payloads.  Note that this prevents fine-grained control
+      # of image processing parameters that some models may support.
+      #
+      # Examples of supported models:
+      #   - Amazon Nova Pro (supports text and images)
+      #   - Amazon Nova Lite (supports text and images)
+      #   - Anthropic Claude / Opus (supports text and images)
+      response = @client.converse(model_id: model_id,
+                                  messages: messages)
+
+      response.output.message.content.first.text
     end
 
     private
+
+      def image_format_for(path)
+        content_type = Marcel::MimeType.for(Pathname.new(path))
+        case content_type
+        when 'image/jpeg' then 'jpeg'
+        when 'image/png'  then 'png'
+        else
+          raise ArgumentError, "Unsupported image type: #{content_type || 'unknown'}"
+        end
+      end
 
       def resize_if_needed(file)
         if File.size(file) < 4_000_000

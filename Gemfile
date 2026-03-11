@@ -7,5 +7,6 @@ gemspec
 
 group :development, :test do
   gem 'niftany'
+  gem 'pry'
   gem 'rspec'
 end
