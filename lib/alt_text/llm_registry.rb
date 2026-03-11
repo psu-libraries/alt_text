@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module AltText
-  # Notice: Bedrock models are updated frequently.
-  # This registry will likely change in the near future.
-  # The Bedrock Ruby SDK's converse method supports these models.
+  # Bedrock model IDs evolve over time, so this mapping is intentionally
+  # centralized and easy to update as models are added, renamed, or retired.
+  # Entries here are expected to work with the Bedrock Ruby SDK `converse` API.
   class LLMRegistry
     LLM_MAP = {
       'default' => 'us.amazon.nova-pro-v1:0',
