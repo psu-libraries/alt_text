@@ -29,24 +29,72 @@ RSpec.describe AltText::Client do
     let(:prompt) { 'Generate alt text from this image.' }
     let(:model_id) { 'default' }
     let(:mock_response) do
-      instance_double(Aws::BedrockRuntime::Types::InvokeModelResponse,
-                      body: StringIO.new({ content: [{ text: 'alt text' }] }.to_json))
+      content_block = instance_double(Aws::BedrockRuntime::Types::ContentBlock, text: 'alt text')
+      message = instance_double(Aws::BedrockRuntime::Types::Message, content: [content_block])
+      output = instance_double(Aws::BedrockRuntime::Types::ConverseOutput, message: message)
+
+      instance_double(Aws::BedrockRuntime::Types::ConverseResponse, output: output)
     end
+    let(:format) { 'jpeg' }
 
     before do
-      allow(mocked_bedrock_client).to receive(:invoke_model).and_return(mock_response)
+      allow(mocked_bedrock_client).to receive(:converse).with(
+        model_id: AltText::LLMRegistry.resolve(model_id),
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                image: {
+                  format: format,
+                  source: {
+                    bytes: File.binread(image_path)
+                  }
+                }
+              },
+              {
+                text: prompt
+              }
+            ]
+          }
+        ]
+      ).and_return(mock_response)
     end
 
-    context 'when no error occurs' do
+    context 'when uploaded image is a jpeg' do
       it 'returns the alt text from the model response' do
         result = client.process_image(image_path, prompt: prompt, model_id: model_id)
         expect(result).to eq('alt text')
       end
     end
 
+    context 'when uploaded image is a png' do
+      let(:image_path) { 'spec/fixtures/penn-state-shield.png' }
+      let(:format) { 'png' }
+
+      it 'returns the alt text from the model response' do
+        result = client.process_image(image_path, prompt: prompt, model_id: model_id)
+        expect(result).to eq('alt text')
+      end
+    end
+
+    context 'when uploaded image is an unsupported format' do
+      let(:image_path) { 'spec/fixtures/penn-state-shield.jpg.pdf' }
+      let(:format) { 'pdf' }
+
+      it 'raises an error' do
+        expect {
+          client.process_image(image_path, prompt: prompt, model_id: model_id)
+        }.to raise_error(ArgumentError, /Unsupported image type: application\/pdf/)
+      end
+    end
+
     context 'when an error occurs' do
       before do
-        allow(mocked_bedrock_client).to receive(:invoke_model).and_raise('error')
+        allow(mocked_bedrock_client).to receive(:converse).with(
+          model_id: AltText::LLMRegistry.resolve(model_id),
+          messages: anything
+        ).and_raise('error')
       end
 
       it 'raises an error' do
