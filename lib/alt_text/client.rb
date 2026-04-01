@@ -14,7 +14,7 @@ module AltText
       )
     end
 
-    def process_image(image_path, prompt:, model_id:)
+    def process_image(image_path, prompt:, model_id:, temperature: 0.0)
       model_id = AltText::LLMRegistry.resolve(model_id)
       image_format = image_format_for(image_path)
       tmp_image = resize_if_needed(image_path)
@@ -52,7 +52,8 @@ module AltText
       #   - Amazon Nova Lite (supports text and images)
       #   - Anthropic Claude / Opus (supports text and images)
       response = @client.converse(model_id: model_id,
-                                  messages: messages)
+                                  messages: messages,
+                                  inference_config: { temperature: temperature })
 
       response.output.message.content.first.text
     end

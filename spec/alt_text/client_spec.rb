@@ -57,7 +57,8 @@ RSpec.describe AltText::Client do
               }
             ]
           }
-        ]
+        ],
+        inference_config: { temperature: 0.0 }
       ).and_return(mock_response)
     end
 
@@ -93,7 +94,8 @@ RSpec.describe AltText::Client do
       before do
         allow(mocked_bedrock_client).to receive(:converse).with(
           model_id: AltText::LLMRegistry.resolve(model_id),
-          messages: anything
+          messages: anything,
+          inference_config: anything
         ).and_raise('error')
       end
 
@@ -101,6 +103,30 @@ RSpec.describe AltText::Client do
         expect {
           client.process_image(image_path, prompt: prompt, model_id: model_id)
         }.to raise_error('error')
+      end
+    end
+
+    context 'temperature configuration' do
+      it 'passes the temperature to the converse call' do
+        allow(mocked_bedrock_client).to receive(:converse).with(
+          model_id: AltText::LLMRegistry.resolve(model_id),
+          messages: anything,
+          inference_config: { temperature: 0.7 }
+        ).and_return(mock_response)
+
+        result = client.process_image(image_path, prompt: prompt, model_id: model_id, temperature: 0.7)
+        expect(result).to eq('alt text')
+      end
+
+      it 'defaults temperature to 0.0' do
+        allow(mocked_bedrock_client).to receive(:converse).with(
+          model_id: AltText::LLMRegistry.resolve(model_id),
+          messages: anything,
+          inference_config: { temperature: 0.0 }
+        ).and_return(mock_response)
+
+        result = client.process_image(image_path, prompt: prompt, model_id: model_id)
+        expect(result).to eq('alt text')
       end
     end
   end
