@@ -106,7 +106,7 @@ RSpec.describe AltText::Client do
       end
     end
 
-    context 'temperature configuration' do
+    context 'when temperature configuration' do
       it 'passes the temperature to the converse call' do
         allow(mocked_bedrock_client).to receive(:converse).with(
           model_id: AltText::LLMRegistry.resolve(model_id),
