@@ -18,9 +18,9 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 3.4'
 
-  spec.add_dependency 'aws-sdk-bedrockruntime', '~> 1.55.0'
-  spec.add_dependency 'dotenv', '~> 3.1.8'
-  spec.add_dependency 'marcel', '~> 1.1'
-  spec.add_dependency 'mini_magick', '~> 5.3.0'
+  spec.add_dependency 'aws-sdk-bedrockruntime', '~> 1.85.0'
+  spec.add_dependency 'dotenv', '~> 3.2.0'
+  spec.add_dependency 'marcel', '~> 2.1.0'
+  spec.add_dependency 'mini_magick', '~> 5.4.0'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
